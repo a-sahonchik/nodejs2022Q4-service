@@ -6,7 +6,7 @@ export class Album {
   private year: number;
   private artistId: string | null;
 
-  constructor(name: string, year: number, artistId?: string) {
+  constructor(name: string, year: number, artistId: string | null) {
     this.id = uuid();
     this.name = name;
     this.year = year;
