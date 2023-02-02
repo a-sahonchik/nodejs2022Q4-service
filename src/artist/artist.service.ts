@@ -31,11 +31,7 @@ export class ArtistService {
   }
 
   update(id: string, updateArtistDto: UpdateArtistDto): Artist {
-    const artist = this.artistRepository.findOne(id);
-
-    if (artist === undefined) {
-      throw new NotFoundException(`Artist with id ${id} is not found`);
-    }
+    const artist = this.findOne(id);
 
     artist.update(updateArtistDto.name, updateArtistDto.grammy);
 
@@ -43,11 +39,7 @@ export class ArtistService {
   }
 
   delete(id: string): void {
-    const artist = this.artistRepository.findOne(id);
-
-    if (artist === undefined) {
-      throw new NotFoundException(`Artist with id ${id} is not found`);
-    }
+    const artist = this.findOne(id);
 
     this.artistRepository.delete(artist);
   }

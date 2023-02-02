@@ -49,11 +49,7 @@ export class TrackService {
   }
 
   update(id: string, updateTrackDto: UpdateTrackDto): Track {
-    const track = this.trackRepository.findOne(id);
-
-    if (track === undefined) {
-      throw new NotFoundException(`Track with id ${id} is not found`);
-    }
+    const track = this.findOne(id);
 
     this.checkIfTrackArtistExistsOrNull(updateTrackDto.artistId);
     this.checkIfTrackAlbumExistsOrNull(updateTrackDto.albumId);
@@ -69,11 +65,7 @@ export class TrackService {
   }
 
   delete(id: string): void {
-    const track = this.trackRepository.findOne(id);
-
-    if (track === undefined) {
-      throw new NotFoundException(`Track with id ${id} is not found`);
-    }
+    const track = this.findOne(id);
 
     this.trackRepository.delete(track);
   }

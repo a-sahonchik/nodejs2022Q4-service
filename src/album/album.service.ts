@@ -45,11 +45,7 @@ export class AlbumService {
   }
 
   update(id: string, updateAlbumDto: UpdateAlbumDto): Album {
-    const album = this.albumRepository.findOne(id);
-
-    if (album === undefined) {
-      throw new NotFoundException(`Album with id ${id} is not found`);
-    }
+    const album = this.findOne(id);
 
     this.checkIfAlbumArtistExistsOrNull(updateAlbumDto.artistId);
 
@@ -63,11 +59,7 @@ export class AlbumService {
   }
 
   delete(id: string): void {
-    const album = this.albumRepository.findOne(id);
-
-    if (album === undefined) {
-      throw new NotFoundException(`Album with id ${id} is not found`);
-    }
+    const album = this.findOne(id);
 
     this.albumRepository.delete(album);
   }

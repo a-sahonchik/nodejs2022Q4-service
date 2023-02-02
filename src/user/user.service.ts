@@ -35,11 +35,7 @@ export class UserService {
   }
 
   updatePassword(id: string, updatePasswordDto: UpdatePasswordDto): User {
-    const user = this.userRepository.findOne(id);
-
-    if (user === undefined) {
-      throw new NotFoundException(`User with id ${id} is not found`);
-    }
+    const user = this.findOne(id);
 
     if (updatePasswordDto.oldPassword !== user.getPassword()) {
       throw new ForbiddenException(`Old password is incorrect`);
@@ -51,11 +47,7 @@ export class UserService {
   }
 
   delete(id: string): void {
-    const user = this.userRepository.findOne(id);
-
-    if (user === undefined) {
-      throw new NotFoundException(`User with id ${id} is not found`);
-    }
+    const user = this.findOne(id);
 
     this.userRepository.delete(user);
   }
