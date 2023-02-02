@@ -1,23 +1,22 @@
 import { User } from './user.entity';
+import { db } from '../db/db.service';
 
 export class UserRepository {
-  private readonly users: User[] = [];
-
   public findAll() {
-    return this.users;
+    return db.users;
   }
 
   public findOne(id: string) {
-    return this.users.find((user) => user.getId() === id);
+    return db.users.find((user) => user.getId() === id);
   }
 
   public create(user: User) {
-    this.users.push(user);
+    db.users.push(user);
   }
 
   public delete(user: User) {
-    const index = this.users.indexOf(user);
+    const index = db.users.indexOf(user);
 
-    this.users.splice(index, 1);
+    db.users.splice(index, 1);
   }
 }
