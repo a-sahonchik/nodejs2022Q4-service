@@ -6,8 +6,16 @@ export class TrackRepository {
     return db.tracks;
   }
 
-  public findOne(id: string) {
+  public findOne(id: string): Track | undefined {
     return db.tracks.find((track) => track.getId() === id);
+  }
+
+  public findAllByAlbumId(albumId: string): Track[] | [] {
+    return db.tracks.filter((track) => track.getAlbumId() === albumId);
+  }
+
+  public findAllByArtistId(artistId: string): Track[] | [] {
+    return db.tracks.filter((track) => track.getArtistId() === artistId);
   }
 
   public create(track: Track) {

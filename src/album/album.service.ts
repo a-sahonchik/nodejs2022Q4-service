@@ -8,12 +8,17 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { Album } from './album.entity';
 import { ArtistRepository } from '../artist/artist.repository';
+import { FavoritesRepository } from '../favorites/favorites.repository';
+import { TrackRepository } from '../track/track.repository';
+import { Track } from '../track/track.entity';
 
 @Injectable()
 export class AlbumService {
   constructor(
     private readonly albumRepository: AlbumRepository,
     private readonly artistRepository: ArtistRepository,
+    private readonly favoritesRepository: FavoritesRepository,
+    private readonly trackRepository: TrackRepository,
   ) {}
 
   findOne(id: string): Album {
@@ -60,6 +65,14 @@ export class AlbumService {
 
   delete(id: string): void {
     const album = this.findOne(id);
+
+    if (this.favoritesRepository.isAlbumInFavorites(id)) {
+      this.favoritesRepository.deleteAlbum(id);
+    }
+
+    this.trackRepository
+      .findAllByAlbumId(id)
+      .forEach((track: Track) => track.setAlbumToNull());
 
     this.albumRepository.delete(album);
   }

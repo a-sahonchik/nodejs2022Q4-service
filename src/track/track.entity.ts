@@ -35,4 +35,20 @@ export class Track {
   public getId(): string {
     return this.id;
   }
+
+  public getAlbumId(): string {
+    return this.albumId;
+  }
+
+  public setAlbumToNull(): void {
+    this.albumId = null;
+  }
+
+  public getArtistId(): string {
+    return this.artistId;
+  }
+
+  public setArtistToNull(): void {
+    this.artistId = null;
+  }
 }

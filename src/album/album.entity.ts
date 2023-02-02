@@ -22,4 +22,12 @@ export class Album {
   public getId(): string {
     return this.id;
   }
+
+  public getArtistId(): string {
+    return this.artistId;
+  }
+
+  public setArtistToNull(): void {
+    this.artistId = null;
+  }
 }

@@ -9,6 +9,7 @@ import { UpdateTrackDto } from './dto/update-track.dto';
 import { ArtistRepository } from '../artist/artist.repository';
 import { Track } from './track.entity';
 import { AlbumRepository } from '../album/album.repository';
+import { FavoritesRepository } from '../favorites/favorites.repository';
 
 @Injectable()
 export class TrackService {
@@ -16,6 +17,7 @@ export class TrackService {
     private readonly trackRepository: TrackRepository,
     private readonly artistRepository: ArtistRepository,
     private readonly albumRepository: AlbumRepository,
+    private readonly favoritesRepository: FavoritesRepository,
   ) {}
 
   findOne(id: string): Track {
@@ -66,6 +68,10 @@ export class TrackService {
 
   delete(id: string): void {
     const track = this.findOne(id);
+
+    if (this.favoritesRepository.isTrackInFavorites(id)) {
+      this.favoritesRepository.deleteTrack(id);
+    }
 
     this.trackRepository.delete(track);
   }

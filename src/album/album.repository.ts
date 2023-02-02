@@ -6,8 +6,12 @@ export class AlbumRepository {
     return db.albums;
   }
 
-  public findOne(id: string) {
+  public findOne(id: string): Album | undefined {
     return db.albums.find((album) => album.getId() === id);
+  }
+
+  public findAllByArtistId(artistId: string): Album[] | [] {
+    return db.albums.filter((album) => album.getArtistId() === artistId);
   }
 
   public create(album: Album) {
