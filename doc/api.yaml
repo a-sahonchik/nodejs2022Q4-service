@@ -4,6 +4,9 @@ info:
   description: Home music library service
   version: 1.0.0
 
+servers:
+  - url: /
+
 components:
   schemas:
     User:
