@@ -6,8 +6,6 @@ import { ValidationPipe } from '@nestjs/common';
 
 dotenv.config();
 
-const port = parseInt(process.env['PORT'], 10);
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
 
@@ -29,7 +27,7 @@ async function bootstrap() {
 
   SwaggerModule.setup('docs', app, document);
 
-  await app.listen(port);
+  await app.listen(process.env.PORT);
 }
 
 bootstrap();

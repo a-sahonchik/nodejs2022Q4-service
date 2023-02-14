@@ -1,0 +1,12 @@
+dist
+node_modules
+db
+
+.idea
+
+.gitignore
+.dockerignore
+
+.env
+.env.example
+*.md
