@@ -3,6 +3,7 @@ node_modules
 db
 
 .idea
+.git
 
 .gitignore
 .dockerignore
@@ -10,3 +11,7 @@ db
 .env
 .env.example
 *.md
+
+npm-debug.log
+
+Dockerfile

@@ -37,20 +37,20 @@ export class UserController {
   @ApiOperation({ summary: 'Get single user by id' })
   @ApiBadRequestResponse({ description: 'Validation errors.' })
   @ApiNotFoundResponse({ description: 'User not found.' })
-  findOne(@Param('id', ParseUUIDPipe) id: string): User {
+  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<User> {
     return this.userService.findOne(id);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get list of users' })
-  findAll(): User[] {
+  async findAll(): Promise<User[]> {
     return this.userService.findAll();
   }
 
   @Post()
   @ApiOperation({ summary: 'Create user' })
   @ApiBadRequestResponse({ description: 'Validation errors.' })
-  create(@Body() createUserDto: CreateUserDto): User {
+  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
     return this.userService.create(createUserDto);
   }
 
@@ -59,10 +59,10 @@ export class UserController {
   @ApiBadRequestResponse({ description: 'Validation errors.' })
   @ApiNotFoundResponse({ description: 'User not found.' })
   @ApiForbiddenResponse({ description: 'Forbidden.' })
-  updatePassword(
+  async updatePassword(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
-  ): User {
+  ): Promise<User> {
     return this.userService.updatePassword(id, updatePasswordDto);
   }
 
@@ -72,8 +72,9 @@ export class UserController {
   @ApiNoContentResponse({ description: 'User deleted.' })
   @ApiBadRequestResponse({ description: 'Validation errors.' })
   @ApiNotFoundResponse({ description: 'User not found.' })
-  delete(@Res() res: Response, @Param('id', ParseUUIDPipe) id: string) {
-    this.userService.delete(id);
+  async delete(@Res() res: Response, @Param('id', ParseUUIDPipe) id: string) {
+    await this.userService.delete(id);
+
     res.status(HttpStatus.NO_CONTENT).json([]);
   }
 }

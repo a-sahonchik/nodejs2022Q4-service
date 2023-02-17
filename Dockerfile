@@ -14,4 +14,4 @@ VOLUME /usr/src/app/node_modules
 
 EXPOSE ${PORT}
 
-CMD ["npm", "run", "start:dev"]
+ENTRYPOINT ./docker-entrypoint.sh

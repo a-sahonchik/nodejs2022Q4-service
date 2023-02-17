@@ -12,8 +12,8 @@ import { UserRepository } from './user.repository';
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  findOne(id: string): User {
-    const user = this.userRepository.findOne(id);
+  async findOne(id: string): Promise<User> {
+    const user = await this.userRepository.findOne(id);
 
     if (user === undefined) {
       throw new NotFoundException(`User with id ${id} is not found`);
@@ -22,33 +22,37 @@ export class UserService {
     return user;
   }
 
-  findAll(): User[] {
+  async findAll(): Promise<User[]> {
     return this.userRepository.findAll();
   }
 
-  create(createUserDto: CreateUserDto): User {
+  async create(createUserDto: CreateUserDto): Promise<User> {
     const user = new User(createUserDto.login, createUserDto.password);
 
-    this.userRepository.create(user);
+    await this.userRepository.create(user);
 
     return user;
   }
 
-  updatePassword(id: string, updatePasswordDto: UpdatePasswordDto): User {
-    const user = this.findOne(id);
+  async updatePassword(
+    id: string,
+    updatePasswordDto: UpdatePasswordDto,
+  ): Promise<User> {
+    const user = await this.findOne(id);
 
-    if (updatePasswordDto.oldPassword !== user.getPassword()) {
+    if (updatePasswordDto.oldPassword !== user.password) {
       throw new ForbiddenException(`Old password is incorrect`);
     }
 
-    user.updatePassword(updatePasswordDto.newPassword);
-
-    return user;
+    return this.userRepository.updatePassword(
+      id,
+      updatePasswordDto.newPassword,
+    );
   }
 
-  delete(id: string): void {
-    const user = this.findOne(id);
+  async delete(id: string): Promise<void> {
+    const user = await this.findOne(id);
 
-    this.userRepository.delete(user);
+    await this.userRepository.delete(user);
   }
 }
