@@ -21,8 +21,8 @@ export class AlbumService {
     private readonly trackRepository: TrackRepository,
   ) {}
 
-  findOne(id: string): Album {
-    const album = this.albumRepository.findOne(id);
+  async findOne(id: string): Promise<Album> {
+    const album = await this.albumRepository.findOne(id);
 
     if (album === undefined) {
       throw new NotFoundException(`Album with id ${id} is not found`);
@@ -31,12 +31,12 @@ export class AlbumService {
     return album;
   }
 
-  findAll(): Album[] {
+  async findAll(): Promise<Album[]> {
     return this.albumRepository.findAll();
   }
 
-  create(createAlbumDto: CreateAlbumDto): Album {
-    this.checkIfAlbumArtistExistsOrNull(createAlbumDto.artistId);
+  async create(createAlbumDto: CreateAlbumDto): Promise<Album> {
+    await this.checkIfAlbumArtistExistsOrNull(createAlbumDto.artistId);
 
     const album = new Album(
       createAlbumDto.name,
@@ -44,27 +44,26 @@ export class AlbumService {
       createAlbumDto.artistId,
     );
 
-    this.albumRepository.create(album);
+    await this.albumRepository.create(album);
 
     return album;
   }
 
-  update(id: string, updateAlbumDto: UpdateAlbumDto): Album {
-    const album = this.findOne(id);
+  async update(id: string, updateAlbumDto: UpdateAlbumDto): Promise<Album> {
+    const album = await this.findOne(id);
 
-    this.checkIfAlbumArtistExistsOrNull(updateAlbumDto.artistId);
+    await this.checkIfAlbumArtistExistsOrNull(updateAlbumDto.artistId);
 
-    album.update(
+    return this.albumRepository.update(
+      album.id,
       updateAlbumDto.name,
       updateAlbumDto.year,
       updateAlbumDto.artistId,
     );
-
-    return album;
   }
 
-  delete(id: string): void {
-    const album = this.findOne(id);
+  async delete(id: string): Promise<void> {
+    const album = await this.findOne(id);
 
     if (this.favoritesRepository.isAlbumInFavorites(id)) {
       this.favoritesRepository.deleteAlbum(id);
@@ -74,15 +73,17 @@ export class AlbumService {
       .findAllByAlbumId(id)
       .forEach((track: Track) => track.setAlbumToNull());
 
-    this.albumRepository.delete(album);
+    await this.albumRepository.delete(album);
   }
 
-  private checkIfAlbumArtistExistsOrNull(artistId: string): void {
+  private async checkIfAlbumArtistExistsOrNull(
+    artistId: string,
+  ): Promise<void> {
     if (artistId === null) {
       return;
     }
 
-    const artist = this.artistRepository.findOne(artistId);
+    const artist = await this.artistRepository.findOne(artistId);
 
     if (artist === undefined) {
       throw new BadRequestException(`Artist with id ${artistId} is not found`);

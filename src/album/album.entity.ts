@@ -1,33 +1,22 @@
-import { v4 as uuid } from 'uuid';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
+@Entity()
 export class Album {
-  private readonly id: string;
-  private name: string;
-  private year: number;
-  private artistId: string | null;
+  @PrimaryGeneratedColumn('uuid')
+  readonly id: string;
+
+  @Column()
+  name: string;
+
+  @Column()
+  year: number;
+
+  @Column({ nullable: true })
+  artistId: string | null;
 
   constructor(name: string, year: number, artistId: string | null) {
-    this.id = uuid();
     this.name = name;
     this.year = year;
     this.artistId = artistId;
-  }
-
-  public update(name: string, year: number, artistId: string | null): void {
-    this.name = name;
-    this.year = year;
-    this.artistId = artistId;
-  }
-
-  public getId(): string {
-    return this.id;
-  }
-
-  public getArtistId(): string {
-    return this.artistId;
-  }
-
-  public setArtistToNull(): void {
-    this.artistId = null;
   }
 }

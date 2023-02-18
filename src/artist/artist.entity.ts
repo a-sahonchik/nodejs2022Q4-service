@@ -5,10 +5,10 @@ export class Artist {
   @PrimaryGeneratedColumn('uuid')
   readonly id: string;
 
-  @Column({ type: 'varchar' })
+  @Column()
   name: string;
 
-  @Column({ type: 'boolean' })
+  @Column()
   grammy: boolean;
 
   constructor(name: string, grammy: boolean) {

@@ -1,26 +1,49 @@
 import { Album } from './album.entity';
-import { db } from '../db/db.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 export class AlbumRepository {
-  public findAll() {
-    return db.albums;
+  constructor(
+    @InjectRepository(Album)
+    private albumRepository: Repository<Album>,
+  ) {}
+
+  public async findAll(): Promise<Album[]> {
+    return this.albumRepository.find();
   }
 
-  public findOne(id: string): Album | undefined {
-    return db.albums.find((album) => album.getId() === id);
+  public async findOne(id: string): Promise<Album | undefined> {
+    try {
+      return await this.albumRepository.findOneByOrFail({ id });
+    } catch {
+      return undefined;
+    }
   }
 
-  public findAllByArtistId(artistId: string): Album[] | [] {
-    return db.albums.filter((album) => album.getArtistId() === artistId);
+  public async findAllByArtistId(artistId: string): Promise<Album[]> {
+    return this.albumRepository.findBy({ artistId });
   }
 
-  public create(album: Album) {
-    db.albums.push(album);
+  public async create(album: Album): Promise<void> {
+    await this.albumRepository.insert(album);
   }
 
-  public delete(album: Album) {
-    const index = db.albums.indexOf(album);
+  public async delete(album: Album): Promise<void> {
+    await this.albumRepository.delete(album.id);
+  }
 
-    db.albums.splice(index, 1);
+  public async update(
+    id: string,
+    name: string,
+    year: number,
+    artistId: string,
+  ): Promise<Album> {
+    await this.albumRepository.update(id, { name, year, artistId });
+
+    return this.findOne(id);
+  }
+
+  public async setAlbumArtistToNull(id: string): Promise<void> {
+    await this.albumRepository.update(id, { artistId: null });
   }
 }

@@ -61,9 +61,11 @@ export class ArtistService {
       .findAllByArtistId(id)
       .forEach((track: Track) => track.setArtistToNull());
 
-    this.albumRepository
-      .findAllByArtistId(id)
-      .forEach((album: Album) => album.setArtistToNull());
+    const artistAlbums = await this.albumRepository.findAllByArtistId(id);
+
+    artistAlbums.forEach((album: Album) =>
+      this.albumRepository.setAlbumArtistToNull(album.id),
+    );
 
     await this.artistRepository.delete(artist);
   }

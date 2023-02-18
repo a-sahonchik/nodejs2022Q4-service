@@ -13,7 +13,7 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   readonly id: string;
 
-  @Column({ type: 'varchar' })
+  @Column()
   private login: string;
 
   @VersionColumn()
@@ -28,7 +28,7 @@ export class User {
   private updatedAt: Date;
 
   @Exclude()
-  @Column({ type: 'varchar' })
+  @Column()
   password: string;
 
   constructor(login: string, password: string) {
