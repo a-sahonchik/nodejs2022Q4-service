@@ -19,13 +19,15 @@ export class FavoritesService {
     private readonly artistRepository: ArtistRepository,
   ) {}
 
-  findAll(): FavoritesResponse {
+  async findAll(): Promise<FavoritesResponse> {
     const favorites = this.favoritesRepository.findAll();
 
+    const artists = favorites.artists.map(
+      async (artistId) => await this.artistRepository.findOne(artistId),
+    );
+
     return {
-      artists: favorites.artists.map((artistId) =>
-        this.artistRepository.findOne(artistId),
-      ),
+      artists: await Promise.all(artists),
       albums: favorites.albums.map((albumId) =>
         this.albumRepository.findOne(albumId),
       ),

@@ -5,8 +5,11 @@ import { FavoritesRepository } from './favorites.repository';
 import { ArtistRepository } from '../artist/artist.repository';
 import { TrackRepository } from '../track/track.repository';
 import { AlbumRepository } from '../album/album.repository';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Artist } from '../artist/artist.entity';
 
 @Module({
+  imports: [TypeOrmModule.forFeature([Artist])],
   controllers: [FavoritesController],
   providers: [
     FavoritesService,

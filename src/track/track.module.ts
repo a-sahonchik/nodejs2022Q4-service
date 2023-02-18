@@ -5,8 +5,11 @@ import { TrackRepository } from './track.repository';
 import { ArtistRepository } from '../artist/artist.repository';
 import { AlbumRepository } from '../album/album.repository';
 import { FavoritesRepository } from '../favorites/favorites.repository';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Artist } from '../artist/artist.entity';
 
 @Module({
+  imports: [TypeOrmModule.forFeature([Artist])],
   controllers: [TrackController],
   providers: [
     TrackService,

@@ -18,8 +18,8 @@ export class ArtistService {
     private readonly albumRepository: AlbumRepository,
   ) {}
 
-  findOne(id: string): Artist {
-    const artist = this.artistRepository.findOne(id);
+  async findOne(id: string): Promise<Artist> {
+    const artist = await this.artistRepository.findOne(id);
 
     if (artist === undefined) {
       throw new NotFoundException(`Artist with id ${id} is not found`);
@@ -28,28 +28,30 @@ export class ArtistService {
     return artist;
   }
 
-  findAll(): Artist[] {
+  async findAll(): Promise<Artist[]> {
     return this.artistRepository.findAll();
   }
 
-  create(createArtistDto: CreateArtistDto): Artist {
+  async create(createArtistDto: CreateArtistDto): Promise<Artist> {
     const artist = new Artist(createArtistDto.name, createArtistDto.grammy);
 
-    this.artistRepository.create(artist);
+    await this.artistRepository.create(artist);
 
     return artist;
   }
 
-  update(id: string, updateArtistDto: UpdateArtistDto): Artist {
-    const artist = this.findOne(id);
+  async update(id: string, updateArtistDto: UpdateArtistDto): Promise<Artist> {
+    const artist = await this.findOne(id);
 
-    artist.update(updateArtistDto.name, updateArtistDto.grammy);
-
-    return artist;
+    return this.artistRepository.update(
+      artist.id,
+      updateArtistDto.name,
+      updateArtistDto.grammy,
+    );
   }
 
-  delete(id: string): void {
-    const artist = this.findOne(id);
+  async delete(id: string): Promise<void> {
+    const artist = await this.findOne(id);
 
     if (this.favoritesRepository.isArtistInFavorites(id)) {
       this.favoritesRepository.deleteArtist(id);
@@ -63,6 +65,6 @@ export class ArtistService {
       .findAllByArtistId(id)
       .forEach((album: Album) => album.setArtistToNull());
 
-    this.artistRepository.delete(artist);
+    await this.artistRepository.delete(artist);
   }
 }

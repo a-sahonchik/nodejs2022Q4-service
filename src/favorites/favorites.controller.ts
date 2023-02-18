@@ -32,7 +32,7 @@ export class FavoritesController {
 
   @Get()
   @ApiOperation({ summary: 'Get list of favorites' })
-  findAll(): FavoritesResponse {
+  async findAll(): Promise<FavoritesResponse> {
     return this.favoritesService.findAll();
   }
 
