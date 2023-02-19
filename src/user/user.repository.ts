@@ -12,12 +12,8 @@ export class UserRepository {
     return this.userRepository.find();
   }
 
-  public async findOne(id: string): Promise<User | undefined> {
-    try {
-      return await this.userRepository.findOneByOrFail({ id });
-    } catch {
-      return undefined;
-    }
+  public async findOne(id: string): Promise<User | null> {
+    return await this.userRepository.findOneBy({ id });
   }
 
   public async create(user: User) {

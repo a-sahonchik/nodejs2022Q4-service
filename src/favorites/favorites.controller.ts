@@ -41,8 +41,9 @@ export class FavoritesController {
   @ApiCreatedResponse({ description: 'Track added to favorites.' })
   @ApiBadRequestResponse({ description: 'Validation errors.' })
   @ApiUnprocessableEntityResponse({ description: 'Track not found.' })
-  addTrack(@Res() res: Response, @Param('id', ParseUUIDPipe) id: string) {
-    this.favoritesService.addTrack(id);
+  async addTrack(@Res() res: Response, @Param('id', ParseUUIDPipe) id: string) {
+    await this.favoritesService.addTrack(id);
+
     res
       .status(HttpStatus.CREATED)
       .json(`Track with id ${id} added to favorites`);
@@ -54,8 +55,12 @@ export class FavoritesController {
   @ApiNoContentResponse({ description: 'Track deleted from favorites.' })
   @ApiBadRequestResponse({ description: 'Validation errors.' })
   @ApiNotFoundResponse({ description: 'Track is not in favorites.' })
-  deleteTrack(@Res() res: Response, @Param('id', ParseUUIDPipe) id: string) {
-    this.favoritesService.deleteTrack(id);
+  async deleteTrack(
+    @Res() res: Response,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    await this.favoritesService.deleteTrack(id);
+
     res.status(HttpStatus.NO_CONTENT).json([]);
   }
 
@@ -64,8 +69,9 @@ export class FavoritesController {
   @ApiCreatedResponse({ description: 'Album added to favorites.' })
   @ApiBadRequestResponse({ description: 'Validation errors.' })
   @ApiUnprocessableEntityResponse({ description: 'Album not found.' })
-  addAlbum(@Res() res: Response, @Param('id', ParseUUIDPipe) id: string) {
-    this.favoritesService.addAlbum(id);
+  async addAlbum(@Res() res: Response, @Param('id', ParseUUIDPipe) id: string) {
+    await this.favoritesService.addAlbum(id);
+
     res
       .status(HttpStatus.CREATED)
       .json(`Album with id ${id} added to favorites`);
@@ -77,8 +83,12 @@ export class FavoritesController {
   @ApiNoContentResponse({ description: 'Album deleted from favorites.' })
   @ApiBadRequestResponse({ description: 'Validation errors.' })
   @ApiNotFoundResponse({ description: 'Album is not in favorites.' })
-  deleteAlbum(@Res() res: Response, @Param('id', ParseUUIDPipe) id: string) {
-    this.favoritesService.deleteAlbum(id);
+  async deleteAlbum(
+    @Res() res: Response,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    await this.favoritesService.deleteAlbum(id);
+
     res.status(HttpStatus.NO_CONTENT).json([]);
   }
 
@@ -87,8 +97,12 @@ export class FavoritesController {
   @ApiCreatedResponse({ description: 'Artist added to favorites.' })
   @ApiBadRequestResponse({ description: 'Validation errors.' })
   @ApiUnprocessableEntityResponse({ description: 'Artist not found.' })
-  addArtist(@Res() res: Response, @Param('id', ParseUUIDPipe) id: string) {
-    this.favoritesService.addArtist(id);
+  async addArtist(
+    @Res() res: Response,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    await this.favoritesService.addArtist(id);
+
     res
       .status(HttpStatus.CREATED)
       .json(`Artist with id ${id} added to favorites`);
@@ -100,8 +114,12 @@ export class FavoritesController {
   @ApiNoContentResponse({ description: 'Artist deleted from favorites.' })
   @ApiBadRequestResponse({ description: 'Validation errors.' })
   @ApiNotFoundResponse({ description: 'Artist is not in favorites.' })
-  deleteArtist(@Res() res: Response, @Param('id', ParseUUIDPipe) id: string) {
-    this.favoritesService.deleteArtist(id);
+  async deleteArtist(
+    @Res() res: Response,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    await this.favoritesService.deleteArtist(id);
+
     res.status(HttpStatus.NO_CONTENT).json([]);
   }
 }

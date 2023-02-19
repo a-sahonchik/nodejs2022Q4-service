@@ -8,7 +8,6 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { Album } from './album.entity';
 import { ArtistRepository } from '../artist/artist.repository';
-import { FavoritesRepository } from '../favorites/favorites.repository';
 import { TrackRepository } from '../track/track.repository';
 import { Track } from '../track/track.entity';
 
@@ -17,14 +16,13 @@ export class AlbumService {
   constructor(
     private readonly albumRepository: AlbumRepository,
     private readonly artistRepository: ArtistRepository,
-    private readonly favoritesRepository: FavoritesRepository,
     private readonly trackRepository: TrackRepository,
   ) {}
 
   async findOne(id: string): Promise<Album> {
     const album = await this.albumRepository.findOne(id);
 
-    if (album === undefined) {
+    if (album === null) {
       throw new NotFoundException(`Album with id ${id} is not found`);
     }
 
@@ -65,10 +63,6 @@ export class AlbumService {
   async delete(id: string): Promise<void> {
     const album = await this.findOne(id);
 
-    if (this.favoritesRepository.isAlbumInFavorites(id)) {
-      this.favoritesRepository.deleteAlbum(id);
-    }
-
     const albumTracks = await this.trackRepository.findAllByAlbumId(id);
 
     albumTracks.forEach((track: Track) =>
@@ -87,7 +81,7 @@ export class AlbumService {
 
     const artist = await this.artistRepository.findOne(artistId);
 
-    if (artist === undefined) {
+    if (artist === null) {
       throw new BadRequestException(`Artist with id ${artistId} is not found`);
     }
   }

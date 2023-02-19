@@ -9,7 +9,6 @@ import { UpdateTrackDto } from './dto/update-track.dto';
 import { ArtistRepository } from '../artist/artist.repository';
 import { Track } from './track.entity';
 import { AlbumRepository } from '../album/album.repository';
-import { FavoritesRepository } from '../favorites/favorites.repository';
 
 @Injectable()
 export class TrackService {
@@ -17,13 +16,12 @@ export class TrackService {
     private readonly trackRepository: TrackRepository,
     private readonly artistRepository: ArtistRepository,
     private readonly albumRepository: AlbumRepository,
-    private readonly favoritesRepository: FavoritesRepository,
   ) {}
 
   async findOne(id: string): Promise<Track> {
     const track = await this.trackRepository.findOne(id);
 
-    if (track === undefined) {
+    if (track === null) {
       throw new NotFoundException(`Track with id ${id} is not found`);
     }
 
@@ -68,10 +66,6 @@ export class TrackService {
   async delete(id: string): Promise<void> {
     const track = await this.findOne(id);
 
-    if (this.favoritesRepository.isTrackInFavorites(id)) {
-      this.favoritesRepository.deleteTrack(id);
-    }
-
     await this.trackRepository.delete(track);
   }
 
@@ -84,7 +78,7 @@ export class TrackService {
 
     const artist = await this.artistRepository.findOne(artistId);
 
-    if (artist === undefined) {
+    if (artist === null) {
       throw new BadRequestException(`Artist with id ${artistId} is not found`);
     }
   }
@@ -96,7 +90,7 @@ export class TrackService {
 
     const album = await this.albumRepository.findOne(albumId);
 
-    if (album === undefined) {
+    if (album === null) {
       throw new BadRequestException(`Album with id ${albumId} is not found`);
     }
   }

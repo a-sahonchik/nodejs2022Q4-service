@@ -12,12 +12,8 @@ export class ArtistRepository {
     return this.artistRepository.find();
   }
 
-  public async findOne(id: string): Promise<Artist | undefined> {
-    try {
-      return await this.artistRepository.findOneByOrFail({ id });
-    } catch {
-      return undefined;
-    }
+  public async findOne(id: string): Promise<Artist | null> {
+    return await this.artistRepository.findOneBy({ id });
   }
 
   public async create(artist: Artist) {
@@ -36,5 +32,13 @@ export class ArtistRepository {
     await this.artistRepository.update(id, { name, grammy });
 
     return this.findOne(id);
+  }
+
+  public async findAllFavorite(): Promise<Artist[]> {
+    return this.artistRepository
+      .createQueryBuilder('a')
+      .select('a')
+      .innerJoin('favorite_artist', 'fa', 'fa.artistId = a.id')
+      .getMany();
   }
 }

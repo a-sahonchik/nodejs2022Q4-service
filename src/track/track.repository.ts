@@ -12,12 +12,8 @@ export class TrackRepository {
     return this.trackRepository.find();
   }
 
-  public async findOne(id: string): Promise<Track | undefined> {
-    try {
-      return await this.trackRepository.findOneByOrFail({ id });
-    } catch {
-      return undefined;
-    }
+  public async findOne(id: string): Promise<Track | null> {
+    return await this.trackRepository.findOneBy({ id });
   }
 
   public async findAllByAlbumId(albumId: string): Promise<Track[]> {
@@ -59,5 +55,13 @@ export class TrackRepository {
 
   public async setTrackAlbumToNull(id: string): Promise<void> {
     await this.trackRepository.update(id, { albumId: null });
+  }
+
+  public async findAllFavorite(): Promise<Track[]> {
+    return this.trackRepository
+      .createQueryBuilder('t')
+      .select('t')
+      .innerJoin('favorite_track', 'ft', 'ft.trackId = t.id')
+      .getMany();
   }
 }

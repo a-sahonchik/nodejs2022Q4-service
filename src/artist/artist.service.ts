@@ -3,7 +3,6 @@ import { ArtistRepository } from './artist.repository';
 import { Artist } from './artist.entity';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
-import { FavoritesRepository } from '../favorites/favorites.repository';
 import { TrackRepository } from '../track/track.repository';
 import { AlbumRepository } from '../album/album.repository';
 import { Track } from '../track/track.entity';
@@ -13,7 +12,6 @@ import { Album } from '../album/album.entity';
 export class ArtistService {
   constructor(
     private readonly artistRepository: ArtistRepository,
-    private readonly favoritesRepository: FavoritesRepository,
     private readonly trackRepository: TrackRepository,
     private readonly albumRepository: AlbumRepository,
   ) {}
@@ -21,7 +19,7 @@ export class ArtistService {
   async findOne(id: string): Promise<Artist> {
     const artist = await this.artistRepository.findOne(id);
 
-    if (artist === undefined) {
+    if (artist === null) {
       throw new NotFoundException(`Artist with id ${id} is not found`);
     }
 
@@ -52,10 +50,6 @@ export class ArtistService {
 
   async delete(id: string): Promise<void> {
     const artist = await this.findOne(id);
-
-    if (this.favoritesRepository.isArtistInFavorites(id)) {
-      this.favoritesRepository.deleteArtist(id);
-    }
 
     const artistTracks = await this.trackRepository.findAllByArtistId(id);
 

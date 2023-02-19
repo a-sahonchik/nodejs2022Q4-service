@@ -12,12 +12,8 @@ export class AlbumRepository {
     return this.albumRepository.find();
   }
 
-  public async findOne(id: string): Promise<Album | undefined> {
-    try {
-      return await this.albumRepository.findOneByOrFail({ id });
-    } catch {
-      return undefined;
-    }
+  public async findOne(id: string): Promise<Album | null> {
+    return await this.albumRepository.findOneBy({ id });
   }
 
   public async findAllByArtistId(artistId: string): Promise<Album[]> {
@@ -45,5 +41,13 @@ export class AlbumRepository {
 
   public async setAlbumArtistToNull(id: string): Promise<void> {
     await this.albumRepository.update(id, { artistId: null });
+  }
+
+  public async findAllFavorite(): Promise<Album[]> {
+    return this.albumRepository
+      .createQueryBuilder('a')
+      .select('a')
+      .innerJoin('favorite_album', 'fa', 'fa.albumId = a.id')
+      .getMany();
   }
 }
