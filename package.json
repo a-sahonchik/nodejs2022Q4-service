@@ -19,7 +19,9 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "scan": "docker scan sahonchik/nodejs2022q4-service-node && docker scan sahonchik/nodejs2022q4-service-db"
+    "scan": "docker scan sahonchik/nodejs2022q4-service-node && docker scan sahonchik/nodejs2022q4-service-db",
+    "typeorm": "typeorm-ts-node-commonjs",
+    "typeorm:migration:generate": "npm run typeorm -- -d ./src/db/data-source.ts migration:generate ./src/db/migrations/SetupDB"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
