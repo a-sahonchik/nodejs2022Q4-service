@@ -8,9 +8,10 @@ import { FavoritesRepository } from '../favorites/favorites.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Artist } from '../artist/artist.entity';
 import { Album } from '../album/album.entity';
+import { Track } from './track.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Artist, Album])],
+  imports: [TypeOrmModule.forFeature([Artist, Album, Track])],
   controllers: [TrackController],
   providers: [
     TrackService,

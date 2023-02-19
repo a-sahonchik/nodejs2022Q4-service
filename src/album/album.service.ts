@@ -69,9 +69,11 @@ export class AlbumService {
       this.favoritesRepository.deleteAlbum(id);
     }
 
-    this.trackRepository
-      .findAllByAlbumId(id)
-      .forEach((track: Track) => track.setAlbumToNull());
+    const albumTracks = await this.trackRepository.findAllByAlbumId(id);
+
+    albumTracks.forEach((track: Track) =>
+      this.trackRepository.setTrackAlbumToNull(track.id),
+    );
 
     await this.albumRepository.delete(album);
   }

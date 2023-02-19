@@ -57,9 +57,11 @@ export class ArtistService {
       this.favoritesRepository.deleteArtist(id);
     }
 
-    this.trackRepository
-      .findAllByArtistId(id)
-      .forEach((track: Track) => track.setArtistToNull());
+    const artistTracks = await this.trackRepository.findAllByArtistId(id);
+
+    artistTracks.forEach((track: Track) =>
+      this.trackRepository.setTrackArtistToNull(track.id),
+    );
 
     const artistAlbums = await this.albumRepository.findAllByArtistId(id);
 

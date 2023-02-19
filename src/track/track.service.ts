@@ -20,8 +20,8 @@ export class TrackService {
     private readonly favoritesRepository: FavoritesRepository,
   ) {}
 
-  findOne(id: string): Track {
-    const track = this.trackRepository.findOne(id);
+  async findOne(id: string): Promise<Track> {
+    const track = await this.trackRepository.findOne(id);
 
     if (track === undefined) {
       throw new NotFoundException(`Track with id ${id} is not found`);
@@ -30,13 +30,13 @@ export class TrackService {
     return track;
   }
 
-  findAll(): Track[] {
+  async findAll(): Promise<Track[]> {
     return this.trackRepository.findAll();
   }
 
-  create(createTrackDto: CreateTrackDto): Track {
-    this.checkIfTrackArtistExistsOrNull(createTrackDto.artistId);
-    this.checkIfTrackAlbumExistsOrNull(createTrackDto.albumId);
+  async create(createTrackDto: CreateTrackDto): Promise<Track> {
+    await this.checkIfTrackArtistExistsOrNull(createTrackDto.artistId);
+    await this.checkIfTrackAlbumExistsOrNull(createTrackDto.albumId);
 
     const track = new Track(
       createTrackDto.name,
@@ -45,55 +45,56 @@ export class TrackService {
       createTrackDto.duration,
     );
 
-    this.trackRepository.create(track);
+    await this.trackRepository.create(track);
 
     return track;
   }
 
-  update(id: string, updateTrackDto: UpdateTrackDto): Track {
-    const track = this.findOne(id);
+  async update(id: string, updateTrackDto: UpdateTrackDto): Promise<Track> {
+    const track = await this.findOne(id);
 
-    this.checkIfTrackArtistExistsOrNull(updateTrackDto.artistId);
-    this.checkIfTrackAlbumExistsOrNull(updateTrackDto.albumId);
+    await this.checkIfTrackArtistExistsOrNull(updateTrackDto.artistId);
+    await this.checkIfTrackAlbumExistsOrNull(updateTrackDto.albumId);
 
-    track.update(
+    return this.trackRepository.update(
+      track.id,
       updateTrackDto.name,
+      updateTrackDto.duration,
       updateTrackDto.artistId,
       updateTrackDto.albumId,
-      updateTrackDto.duration,
     );
-
-    return track;
   }
 
-  delete(id: string): void {
-    const track = this.findOne(id);
+  async delete(id: string): Promise<void> {
+    const track = await this.findOne(id);
 
     if (this.favoritesRepository.isTrackInFavorites(id)) {
       this.favoritesRepository.deleteTrack(id);
     }
 
-    this.trackRepository.delete(track);
+    await this.trackRepository.delete(track);
   }
 
-  private checkIfTrackArtistExistsOrNull(artistId: string): void {
+  private async checkIfTrackArtistExistsOrNull(
+    artistId: string,
+  ): Promise<void> {
     if (artistId === null) {
       return;
     }
 
-    const artist = this.artistRepository.findOne(artistId);
+    const artist = await this.artistRepository.findOne(artistId);
 
     if (artist === undefined) {
       throw new BadRequestException(`Artist with id ${artistId} is not found`);
     }
   }
 
-  private checkIfTrackAlbumExistsOrNull(albumId: string): void {
+  private async checkIfTrackAlbumExistsOrNull(albumId: string): Promise<void> {
     if (albumId === null) {
       return;
     }
 
-    const album = this.albumRepository.findOne(albumId);
+    const album = await this.albumRepository.findOne(albumId);
 
     if (album === undefined) {
       throw new BadRequestException(`Album with id ${albumId} is not found`);

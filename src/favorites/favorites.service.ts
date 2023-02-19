@@ -30,12 +30,14 @@ export class FavoritesService {
       async (albumId) => await this.albumRepository.findOne(albumId),
     );
 
+    const tracks = favorites.tracks.map(
+      async (trackId) => await this.trackRepository.findOne(trackId),
+    );
+
     return {
       artists: await Promise.all(artists),
       albums: await Promise.all(albums),
-      tracks: favorites.tracks.map((trackId) =>
-        this.trackRepository.findOne(trackId),
-      ),
+      tracks: await Promise.all(tracks),
     };
   }
 
