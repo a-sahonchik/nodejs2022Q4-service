@@ -35,7 +35,8 @@ services:
     networks:
       - db
     volumes:
-      - db-data:/var/lib/postgresql/data/pgdata
+      - db-data:/var/lib/postgresql/data
+    command: ['postgres', '-c', 'logging_collector=on']
 
 volumes:
   db-data:
