@@ -4,6 +4,7 @@
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
 - Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+- Docker - [Donwload & Install Docker](https://docs.docker.com/get-docker)
 
 ## Installation
 
@@ -12,13 +13,7 @@ git clone https://github.com/a-sahonchik/nodejs2022Q4-service.git
 
 cd nodejs2022Q4-service
 
-git checkout development
-```
-
-## Installing NPM modules
-
-```
-npm install
+git checkout feature/docker-containerization-and-postgres
 ```
 
 **!!! Copy `.env.example` to `.env` !!!**
@@ -30,12 +25,24 @@ cp .env.example .env
 ## Running application
 
 ```bash
-npm start
+docker compose build
+
+docker compose up
 ```
 
 After starting the app on port (`4000` as default, and you can change it value with `PORT` variable in `.env`) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/docs/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
+
+All needed database migrations will be executed automatically.
+
+## Scanning images for vulnerabilities
+
+**!!! You need to be logged in your Docker Hub account to perform scanning !!!**
+
+```bash
+npm run scan
+```
 
 ## Testing
 
