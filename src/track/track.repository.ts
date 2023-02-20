@@ -1,6 +1,8 @@
 import { Track } from './track.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Album } from '../album/album.entity';
+import { Artist } from '../artist/artist.entity';
 
 export class TrackRepository {
   constructor(
@@ -16,14 +18,6 @@ export class TrackRepository {
     return await this.trackRepository.findOneBy({ id });
   }
 
-  public async findAllByAlbumId(albumId: string): Promise<Track[]> {
-    return this.trackRepository.findBy({ albumId });
-  }
-
-  public async findAllByArtistId(artistId: string): Promise<Track[]> {
-    return this.trackRepository.findBy({ artistId });
-  }
-
   public async create(track: Track): Promise<void> {
     await this.trackRepository.insert(track);
   }
@@ -36,31 +30,26 @@ export class TrackRepository {
     id: string,
     name: string,
     duration: number,
-    artistId: string,
-    albumId: string,
+    artist: Artist,
+    album: Album,
   ): Promise<Track> {
     await this.trackRepository.update(id, {
       name,
       duration,
-      artistId,
-      albumId,
+      artist,
+      album,
     });
 
     return this.findOne(id);
-  }
-
-  public async setTrackArtistToNull(id: string): Promise<void> {
-    await this.trackRepository.update(id, { artistId: null });
-  }
-
-  public async setTrackAlbumToNull(id: string): Promise<void> {
-    await this.trackRepository.update(id, { albumId: null });
   }
 
   public async findAllFavorite(): Promise<Track[]> {
     return this.trackRepository
       .createQueryBuilder('t')
       .select('t')
+      .addSelect(['tar', 'tal'])
+      .leftJoin('t.artist', 'tar')
+      .leftJoin('t.album', 'tal')
       .innerJoin('favorite_track', 'ft', 'ft.trackId = t.id')
       .getMany();
   }

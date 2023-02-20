@@ -1,6 +1,7 @@
 import { Album } from './album.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Artist } from '../artist/artist.entity';
 
 export class AlbumRepository {
   constructor(
@@ -16,10 +17,6 @@ export class AlbumRepository {
     return await this.albumRepository.findOneBy({ id });
   }
 
-  public async findAllByArtistId(artistId: string): Promise<Album[]> {
-    return this.albumRepository.findBy({ artistId });
-  }
-
   public async create(album: Album): Promise<void> {
     await this.albumRepository.insert(album);
   }
@@ -32,21 +29,19 @@ export class AlbumRepository {
     id: string,
     name: string,
     year: number,
-    artistId: string,
+    artist: Artist,
   ): Promise<Album> {
-    await this.albumRepository.update(id, { name, year, artistId });
+    await this.albumRepository.update(id, { name, year, artist });
 
     return this.findOne(id);
-  }
-
-  public async setAlbumArtistToNull(id: string): Promise<void> {
-    await this.albumRepository.update(id, { artistId: null });
   }
 
   public async findAllFavorite(): Promise<Album[]> {
     return this.albumRepository
       .createQueryBuilder('a')
       .select('a')
+      .addSelect('aa')
+      .leftJoin('a.artist', 'aa')
       .innerJoin('favorite_album', 'fa', 'fa.albumId = a.id')
       .getMany();
   }

@@ -9,6 +9,8 @@ import { UpdateTrackDto } from './dto/update-track.dto';
 import { ArtistRepository } from '../artist/artist.repository';
 import { Track } from './track.entity';
 import { AlbumRepository } from '../album/album.repository';
+import { Artist } from '../artist/artist.entity';
+import { Album } from '../album/album.entity';
 
 @Injectable()
 export class TrackService {
@@ -33,14 +35,14 @@ export class TrackService {
   }
 
   async create(createTrackDto: CreateTrackDto): Promise<Track> {
-    await this.checkIfTrackArtistExistsOrNull(createTrackDto.artistId);
-    await this.checkIfTrackAlbumExistsOrNull(createTrackDto.albumId);
+    const artist = await this.getTrackArtistFromDto(createTrackDto.artistId);
+    const album = await this.getTrackAlbumFromDto(createTrackDto.albumId);
 
     const track = new Track(
       createTrackDto.name,
-      createTrackDto.artistId,
-      createTrackDto.albumId,
       createTrackDto.duration,
+      artist,
+      album,
     );
 
     await this.trackRepository.create(track);
@@ -51,15 +53,15 @@ export class TrackService {
   async update(id: string, updateTrackDto: UpdateTrackDto): Promise<Track> {
     const track = await this.findOne(id);
 
-    await this.checkIfTrackArtistExistsOrNull(updateTrackDto.artistId);
-    await this.checkIfTrackAlbumExistsOrNull(updateTrackDto.albumId);
+    const artist = await this.getTrackArtistFromDto(updateTrackDto.artistId);
+    const album = await this.getTrackAlbumFromDto(updateTrackDto.albumId);
 
     return this.trackRepository.update(
       track.id,
       updateTrackDto.name,
       updateTrackDto.duration,
-      updateTrackDto.artistId,
-      updateTrackDto.albumId,
+      artist,
+      album,
     );
   }
 
@@ -69,11 +71,11 @@ export class TrackService {
     await this.trackRepository.delete(track);
   }
 
-  private async checkIfTrackArtistExistsOrNull(
+  private async getTrackArtistFromDto(
     artistId: string,
-  ): Promise<void> {
+  ): Promise<Artist | null> {
     if (artistId === null) {
-      return;
+      return null;
     }
 
     const artist = await this.artistRepository.findOne(artistId);
@@ -81,11 +83,13 @@ export class TrackService {
     if (artist === null) {
       throw new BadRequestException(`Artist with id ${artistId} is not found`);
     }
+
+    return artist;
   }
 
-  private async checkIfTrackAlbumExistsOrNull(albumId: string): Promise<void> {
+  private async getTrackAlbumFromDto(albumId: string): Promise<Album | null> {
     if (albumId === null) {
-      return;
+      return null;
     }
 
     const album = await this.albumRepository.findOne(albumId);
@@ -93,5 +97,7 @@ export class TrackService {
     if (album === null) {
       throw new BadRequestException(`Album with id ${albumId} is not found`);
     }
+
+    return album;
   }
 }

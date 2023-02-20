@@ -11,6 +11,8 @@ import { DataSourceOptions } from 'typeorm';
 const databaseConfig: TypeOrmModuleOptions & DataSourceOptions = {
   type: 'postgres',
   url: process.env.DB_URL,
+  username: 'postgres',
+  password: 'postgres',
   entities: [
     User,
     Artist,

@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Artist } from '../artist/artist.entity';
+import { Expose, Transform } from 'class-transformer';
 
 @Entity()
 export class Album {
@@ -11,12 +13,14 @@ export class Album {
   @Column()
   year: number;
 
-  @Column({ nullable: true })
-  artistId: string | null;
+  @ManyToOne(() => Artist, null, { onDelete: 'SET NULL', eager: true })
+  @Expose({ name: 'artistId' })
+  @Transform(({ value }) => (value ? value.id : null))
+  artist: Artist | null;
 
-  constructor(name: string, year: number, artistId: string | null) {
+  constructor(name: string, year: number, artist: Artist | null) {
     this.name = name;
     this.year = year;
-    this.artistId = artistId;
+    this.artist = artist;
   }
 }
