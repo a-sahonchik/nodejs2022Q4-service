@@ -1,26 +1,48 @@
 import { Album } from './album.entity';
-import { db } from '../db/db.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Artist } from '../artist/artist.entity';
 
 export class AlbumRepository {
-  public findAll() {
-    return db.albums;
+  constructor(
+    @InjectRepository(Album)
+    private albumRepository: Repository<Album>,
+  ) {}
+
+  public async findAll(): Promise<Album[]> {
+    return this.albumRepository.find();
   }
 
-  public findOne(id: string): Album | undefined {
-    return db.albums.find((album) => album.getId() === id);
+  public async findOne(id: string): Promise<Album | null> {
+    return await this.albumRepository.findOneBy({ id });
   }
 
-  public findAllByArtistId(artistId: string): Album[] | [] {
-    return db.albums.filter((album) => album.getArtistId() === artistId);
+  public async create(album: Album): Promise<void> {
+    await this.albumRepository.insert(album);
   }
 
-  public create(album: Album) {
-    db.albums.push(album);
+  public async delete(album: Album): Promise<void> {
+    await this.albumRepository.delete(album.id);
   }
 
-  public delete(album: Album) {
-    const index = db.albums.indexOf(album);
+  public async update(
+    id: string,
+    name: string,
+    year: number,
+    artist: Artist,
+  ): Promise<Album> {
+    await this.albumRepository.update(id, { name, year, artist });
 
-    db.albums.splice(index, 1);
+    return this.findOne(id);
+  }
+
+  public async findAllFavorite(): Promise<Album[]> {
+    return this.albumRepository
+      .createQueryBuilder('a')
+      .select('a')
+      .addSelect('aa')
+      .leftJoin('a.artist', 'aa')
+      .innerJoin('favorite_album', 'fa', 'fa.albumId = a.id')
+      .getMany();
   }
 }

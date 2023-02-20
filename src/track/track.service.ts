@@ -9,7 +9,8 @@ import { UpdateTrackDto } from './dto/update-track.dto';
 import { ArtistRepository } from '../artist/artist.repository';
 import { Track } from './track.entity';
 import { AlbumRepository } from '../album/album.repository';
-import { FavoritesRepository } from '../favorites/favorites.repository';
+import { Artist } from '../artist/artist.entity';
+import { Album } from '../album/album.entity';
 
 @Injectable()
 export class TrackService {
@@ -17,86 +18,86 @@ export class TrackService {
     private readonly trackRepository: TrackRepository,
     private readonly artistRepository: ArtistRepository,
     private readonly albumRepository: AlbumRepository,
-    private readonly favoritesRepository: FavoritesRepository,
   ) {}
 
-  findOne(id: string): Track {
-    const track = this.trackRepository.findOne(id);
+  async findOne(id: string): Promise<Track> {
+    const track = await this.trackRepository.findOne(id);
 
-    if (track === undefined) {
+    if (track === null) {
       throw new NotFoundException(`Track with id ${id} is not found`);
     }
 
     return track;
   }
 
-  findAll(): Track[] {
+  async findAll(): Promise<Track[]> {
     return this.trackRepository.findAll();
   }
 
-  create(createTrackDto: CreateTrackDto): Track {
-    this.checkIfTrackArtistExistsOrNull(createTrackDto.artistId);
-    this.checkIfTrackAlbumExistsOrNull(createTrackDto.albumId);
+  async create(createTrackDto: CreateTrackDto): Promise<Track> {
+    const artist = await this.getTrackArtistFromDto(createTrackDto.artistId);
+    const album = await this.getTrackAlbumFromDto(createTrackDto.albumId);
 
     const track = new Track(
       createTrackDto.name,
-      createTrackDto.artistId,
-      createTrackDto.albumId,
       createTrackDto.duration,
+      artist,
+      album,
     );
 
-    this.trackRepository.create(track);
+    await this.trackRepository.create(track);
 
     return track;
   }
 
-  update(id: string, updateTrackDto: UpdateTrackDto): Track {
-    const track = this.findOne(id);
+  async update(id: string, updateTrackDto: UpdateTrackDto): Promise<Track> {
+    const track = await this.findOne(id);
 
-    this.checkIfTrackArtistExistsOrNull(updateTrackDto.artistId);
-    this.checkIfTrackAlbumExistsOrNull(updateTrackDto.albumId);
+    const artist = await this.getTrackArtistFromDto(updateTrackDto.artistId);
+    const album = await this.getTrackAlbumFromDto(updateTrackDto.albumId);
 
-    track.update(
+    return this.trackRepository.update(
+      track.id,
       updateTrackDto.name,
-      updateTrackDto.artistId,
-      updateTrackDto.albumId,
       updateTrackDto.duration,
+      artist,
+      album,
     );
-
-    return track;
   }
 
-  delete(id: string): void {
-    const track = this.findOne(id);
+  async delete(id: string): Promise<void> {
+    const track = await this.findOne(id);
 
-    if (this.favoritesRepository.isTrackInFavorites(id)) {
-      this.favoritesRepository.deleteTrack(id);
-    }
-
-    this.trackRepository.delete(track);
+    await this.trackRepository.delete(track);
   }
 
-  private checkIfTrackArtistExistsOrNull(artistId: string): void {
+  private async getTrackArtistFromDto(
+    artistId: string,
+  ): Promise<Artist | null> {
     if (artistId === null) {
-      return;
+      return null;
     }
 
-    const artist = this.artistRepository.findOne(artistId);
+    const artist = await this.artistRepository.findOne(artistId);
 
-    if (artist === undefined) {
+    if (artist === null) {
       throw new BadRequestException(`Artist with id ${artistId} is not found`);
     }
+
+    return artist;
   }
 
-  private checkIfTrackAlbumExistsOrNull(albumId: string): void {
+  private async getTrackAlbumFromDto(albumId: string): Promise<Album | null> {
     if (albumId === null) {
-      return;
+      return null;
     }
 
-    const album = this.albumRepository.findOne(albumId);
+    const album = await this.albumRepository.findOne(albumId);
 
-    if (album === undefined) {
+    if (album === null) {
       throw new BadRequestException(`Album with id ${albumId} is not found`);
     }
+
+    return album;
   }
 }

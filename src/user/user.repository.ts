@@ -1,22 +1,32 @@
 import { User } from './user.entity';
-import { db } from '../db/db.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 export class UserRepository {
-  public findAll() {
-    return db.users;
+  constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+  ) {}
+
+  public async findAll(): Promise<User[]> {
+    return this.userRepository.find();
   }
 
-  public findOne(id: string) {
-    return db.users.find((user) => user.getId() === id);
+  public async findOne(id: string): Promise<User | null> {
+    return await this.userRepository.findOneBy({ id });
   }
 
-  public create(user: User) {
-    db.users.push(user);
+  public async create(user: User) {
+    await this.userRepository.insert(user);
   }
 
-  public delete(user: User) {
-    const index = db.users.indexOf(user);
+  public async delete(user: User) {
+    await this.userRepository.delete(user.id);
+  }
 
-    db.users.splice(index, 1);
+  public async updatePassword(id: string, password: string): Promise<User> {
+    await this.userRepository.update(id, { password });
+
+    return this.findOne(id);
   }
 }

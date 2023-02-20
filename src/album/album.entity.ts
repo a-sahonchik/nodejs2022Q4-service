@@ -1,33 +1,26 @@
-import { v4 as uuid } from 'uuid';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Artist } from '../artist/artist.entity';
+import { Expose, Transform } from 'class-transformer';
 
+@Entity()
 export class Album {
-  private readonly id: string;
-  private name: string;
-  private year: number;
-  private artistId: string | null;
+  @PrimaryGeneratedColumn('uuid')
+  readonly id: string;
 
-  constructor(name: string, year: number, artistId: string | null) {
-    this.id = uuid();
+  @Column()
+  name: string;
+
+  @Column()
+  year: number;
+
+  @ManyToOne(() => Artist, null, { onDelete: 'SET NULL', eager: true })
+  @Expose({ name: 'artistId' })
+  @Transform(({ value }) => (value ? value.id : null))
+  artist: Artist | null;
+
+  constructor(name: string, year: number, artist: Artist | null) {
     this.name = name;
     this.year = year;
-    this.artistId = artistId;
-  }
-
-  public update(name: string, year: number, artistId: string | null): void {
-    this.name = name;
-    this.year = year;
-    this.artistId = artistId;
-  }
-
-  public getId(): string {
-    return this.id;
-  }
-
-  public getArtistId(): string {
-    return this.artistId;
-  }
-
-  public setArtistToNull(): void {
-    this.artistId = null;
+    this.artist = artist;
   }
 }

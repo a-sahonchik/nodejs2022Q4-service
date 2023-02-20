@@ -36,20 +36,20 @@ export class AlbumController {
   @ApiOperation({ summary: 'Get single album by id' })
   @ApiBadRequestResponse({ description: 'Validation errors.' })
   @ApiNotFoundResponse({ description: 'Album not found.' })
-  findOne(@Param('id', ParseUUIDPipe) id: string): Album {
+  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Album> {
     return this.albumService.findOne(id);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get list of albums' })
-  findAll(): Album[] {
+  async findAll(): Promise<Album[]> {
     return this.albumService.findAll();
   }
 
   @Post()
   @ApiOperation({ summary: 'Create album' })
   @ApiBadRequestResponse({ description: 'Validation errors.' })
-  create(@Body() createAlbumDto: CreateAlbumDto): Album {
+  async create(@Body() createAlbumDto: CreateAlbumDto): Promise<Album> {
     return this.albumService.create(createAlbumDto);
   }
 
@@ -57,10 +57,10 @@ export class AlbumController {
   @ApiOperation({ summary: 'Update album' })
   @ApiBadRequestResponse({ description: 'Validation errors.' })
   @ApiNotFoundResponse({ description: 'Album not found.' })
-  update(
+  async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateAlbumDto: UpdateAlbumDto,
-  ): Album {
+  ): Promise<Album> {
     return this.albumService.update(id, updateAlbumDto);
   }
 
@@ -70,8 +70,8 @@ export class AlbumController {
   @ApiNoContentResponse({ description: 'Album deleted.' })
   @ApiBadRequestResponse({ description: 'Validation errors.' })
   @ApiNotFoundResponse({ description: 'Album not found.' })
-  delete(@Res() res: Response, @Param('id', ParseUUIDPipe) id: string) {
-    this.albumService.delete(id);
+  async delete(@Res() res: Response, @Param('id', ParseUUIDPipe) id: string) {
+    await this.albumService.delete(id);
     res.status(HttpStatus.NO_CONTENT).json([]);
   }
 }

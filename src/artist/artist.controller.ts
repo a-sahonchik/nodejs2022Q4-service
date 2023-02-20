@@ -36,20 +36,20 @@ export class ArtistController {
   @ApiOperation({ summary: 'Get single artist by id' })
   @ApiBadRequestResponse({ description: 'Validation errors.' })
   @ApiNotFoundResponse({ description: 'Artist not found.' })
-  findOne(@Param('id', ParseUUIDPipe) id: string): Artist {
+  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Artist> {
     return this.artistService.findOne(id);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get list of artists' })
-  findAll(): Artist[] {
+  async findAll(): Promise<Artist[]> {
     return this.artistService.findAll();
   }
 
   @Post()
   @ApiOperation({ summary: 'Create artist' })
   @ApiBadRequestResponse({ description: 'Validation errors.' })
-  create(@Body() createArtistDto: CreateArtistDto): Artist {
+  async create(@Body() createArtistDto: CreateArtistDto): Promise<Artist> {
     return this.artistService.create(createArtistDto);
   }
 
@@ -57,10 +57,10 @@ export class ArtistController {
   @ApiOperation({ summary: 'Update artist' })
   @ApiBadRequestResponse({ description: 'Validation errors.' })
   @ApiNotFoundResponse({ description: 'Artist not found.' })
-  update(
+  async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateArtistDto: UpdateArtistDto,
-  ): Artist {
+  ): Promise<Artist> {
     return this.artistService.update(id, updateArtistDto);
   }
 
@@ -70,8 +70,8 @@ export class ArtistController {
   @ApiNoContentResponse({ description: 'Artist deleted.' })
   @ApiBadRequestResponse({ description: 'Validation errors.' })
   @ApiNotFoundResponse({ description: 'Artist not found.' })
-  delete(@Res() res: Response, @Param('id', ParseUUIDPipe) id: string) {
-    this.artistService.delete(id);
+  async delete(@Res() res: Response, @Param('id', ParseUUIDPipe) id: string) {
+    await this.artistService.delete(id);
     res.status(HttpStatus.NO_CONTENT).json([]);
   }
 }

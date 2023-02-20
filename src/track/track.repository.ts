@@ -1,30 +1,56 @@
-import { db } from '../db/db.service';
 import { Track } from './track.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Album } from '../album/album.entity';
+import { Artist } from '../artist/artist.entity';
 
 export class TrackRepository {
-  public findAll() {
-    return db.tracks;
+  constructor(
+    @InjectRepository(Track)
+    private trackRepository: Repository<Track>,
+  ) {}
+
+  public async findAll(): Promise<Track[]> {
+    return this.trackRepository.find();
   }
 
-  public findOne(id: string): Track | undefined {
-    return db.tracks.find((track) => track.getId() === id);
+  public async findOne(id: string): Promise<Track | null> {
+    return await this.trackRepository.findOneBy({ id });
   }
 
-  public findAllByAlbumId(albumId: string): Track[] | [] {
-    return db.tracks.filter((track) => track.getAlbumId() === albumId);
+  public async create(track: Track): Promise<void> {
+    await this.trackRepository.insert(track);
   }
 
-  public findAllByArtistId(artistId: string): Track[] | [] {
-    return db.tracks.filter((track) => track.getArtistId() === artistId);
+  public async delete(track: Track): Promise<void> {
+    await this.trackRepository.delete(track.id);
   }
 
-  public create(track: Track) {
-    db.tracks.push(track);
+  public async update(
+    id: string,
+    name: string,
+    duration: number,
+    artist: Artist,
+    album: Album,
+  ): Promise<Track> {
+    await this.trackRepository.update(id, {
+      name,
+      duration,
+      artist,
+      album,
+    });
+
+    return this.findOne(id);
   }
 
-  public delete(track: Track) {
-    const index = db.tracks.indexOf(track);
-
-    db.tracks.splice(index, 1);
+  public async findAllFavorite(): Promise<Track[]> {
+    return this.trackRepository
+      .createQueryBuilder('t')
+      .select('t')
+      .addSelect(['tar', 'tal'])
+      .leftJoin('t.artist', 'tar')
+      .leftJoin('t.album', 'tal')
+      .innerJoin('favorite_track', 'ft', 'ft.trackId = t.id')
+      .getMany();
   }
 }

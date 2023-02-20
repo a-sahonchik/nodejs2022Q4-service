@@ -36,20 +36,20 @@ export class TrackController {
   @ApiOperation({ summary: 'Get single track by id' })
   @ApiBadRequestResponse({ description: 'Validation errors.' })
   @ApiNotFoundResponse({ description: 'Track not found.' })
-  findOne(@Param('id', ParseUUIDPipe) id: string): Track {
+  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Track> {
     return this.trackService.findOne(id);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get list of tracks' })
-  findAll(): Track[] {
+  async findAll(): Promise<Track[]> {
     return this.trackService.findAll();
   }
 
   @Post()
   @ApiOperation({ summary: 'Create track' })
   @ApiBadRequestResponse({ description: 'Validation errors.' })
-  create(@Body() createTrackDto: CreateTrackDto): Track {
+  async create(@Body() createTrackDto: CreateTrackDto): Promise<Track> {
     return this.trackService.create(createTrackDto);
   }
 
@@ -57,10 +57,10 @@ export class TrackController {
   @ApiOperation({ summary: 'Update track' })
   @ApiBadRequestResponse({ description: 'Validation errors.' })
   @ApiNotFoundResponse({ description: 'Track not found.' })
-  update(
+  async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateTrackDto: UpdateTrackDto,
-  ): Track {
+  ): Promise<Track> {
     return this.trackService.update(id, updateTrackDto);
   }
 
@@ -70,8 +70,8 @@ export class TrackController {
   @ApiNoContentResponse({ description: 'Track deleted.' })
   @ApiBadRequestResponse({ description: 'Validation errors.' })
   @ApiNotFoundResponse({ description: 'Track not found.' })
-  delete(@Res() res: Response, @Param('id', ParseUUIDPipe) id: string) {
-    this.trackService.delete(id);
+  async delete(@Res() res: Response, @Param('id', ParseUUIDPipe) id: string) {
+    await this.trackService.delete(id);
     res.status(HttpStatus.NO_CONTENT).json([]);
   }
 }

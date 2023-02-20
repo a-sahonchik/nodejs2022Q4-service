@@ -1,54 +1,38 @@
-import { v4 as uuid } from 'uuid';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Artist } from '../artist/artist.entity';
+import { Album } from '../album/album.entity';
+import { Expose, Transform } from 'class-transformer';
 
+@Entity()
 export class Track {
-  private readonly id: string;
-  private name: string;
-  private artistId: string | null;
-  private albumId: string | null;
-  private duration: number;
+  @PrimaryGeneratedColumn('uuid')
+  readonly id: string;
+
+  @Column()
+  name: string;
+
+  @Column()
+  duration: number;
+
+  @ManyToOne(() => Artist, null, { onDelete: 'SET NULL', eager: true })
+  @Expose({ name: 'artistId' })
+  @Transform(({ value }) => (value ? value.id : null))
+  artist: Artist | null;
+
+  @ManyToOne(() => Album, null, { onDelete: 'SET NULL', eager: true })
+  @Expose({ name: 'albumId' })
+  @Transform(({ value }) => (value ? value.id : null))
+  album: Album | null;
 
   constructor(
     name: string,
-    artistId: string | null,
-    albumId: string | null,
     duration: number,
+    artist: Artist | null,
+    album: Album | null,
   ) {
-    this.id = uuid();
     this.name = name;
-    this.artistId = artistId;
-    this.albumId = albumId;
     this.duration = duration;
-  }
-
-  public update(
-    name: string,
-    artistId: string | null,
-    albumId: string | null,
-    duration: number,
-  ): void {
-    this.name = name;
-    this.artistId = artistId;
-    this.albumId = albumId;
-    this.duration = duration;
-  }
-
-  public getId(): string {
-    return this.id;
-  }
-
-  public getAlbumId(): string {
-    return this.albumId;
-  }
-
-  public setAlbumToNull(): void {
-    this.albumId = null;
-  }
-
-  public getArtistId(): string {
-    return this.artistId;
-  }
-
-  public setArtistToNull(): void {
-    this.artistId = null;
+    this.artist = artist;
+    this.album = album;
   }
 }

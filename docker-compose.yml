@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  node:
+    image: sahonchik/nodejs2022q4-service-node
+    build:
+      context: .
+      target: nodejs2022q4_service_node_dev
+    ports:
+      - ${PORT}:${PORT}
+    environment:
+      - PORT=${PORT}
+      - DB_URL=${DB_URL}
+    depends_on:
+      - db
+    restart: on-failure
+    networks:
+      - db
+    volumes:
+      - .:/usr/src/app
+      - node-modules:/usr/src/app/node_modules
+
+  db:
+    image: sahonchik/nodejs2022q4-service-db
+    build:
+      context: ./db
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - PGDATA=${PGDATA}
+    restart: on-failure
+    networks:
+      - db
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    command: ['postgres', '-c', 'logging_collector=on']
+
+volumes:
+  db-data:
+  node-modules:
+
+networks:
+  db:
