@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   node:
-    image: sahonchik/nodejs2022q4-service-node:latest
+    image: sahonchik/nodejs2022q4-service-node
     build:
       context: .
       target: nodejs2022q4_service_node_dev
@@ -21,7 +21,7 @@ services:
       - node-modules:/usr/src/app/node_modules
 
   db:
-    image: sahonchik/nodejs2022q4-service-db:latest
+    image: sahonchik/nodejs2022q4-service-db
     build:
       context: ./db
     ports:
