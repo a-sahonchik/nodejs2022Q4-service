@@ -19,6 +19,17 @@ async function bootstrap() {
   const httpAdapter = app.get(HttpAdapterHost);
   app.useGlobalFilters(new HttpExceptionFilter(httpAdapter));
 
+  const logger = app.get(Logger);
+
+  process.on('uncaughtException', (err, origin) => {
+    logger.error(`Caught exception: ${err}. Exception origin: ${origin}.`);
+    process.exit(1);
+  });
+
+  process.on('unhandledRejection', (reason, promise) => {
+    logger.error(`Unhandled Rejection at: ${promise}, reason: ${reason}`);
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

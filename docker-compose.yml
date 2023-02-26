@@ -11,6 +11,7 @@ services:
     environment:
       - PORT=${PORT}
       - DB_URL=${DB_URL}
+      - LOG_FILE_MAX_SIZE=${LOG_FILE_MAX_SIZE}
     depends_on:
       - db
     restart: on-failure
@@ -36,7 +37,7 @@ services:
       - db
     volumes:
       - db-data:/var/lib/postgresql/data
-    command: ['postgres', '-c', 'logging_collector=on']
+#    command: ['postgres', '-c', 'logging_collector=on']
 
 volumes:
   db-data:
