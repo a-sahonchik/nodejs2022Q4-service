@@ -1,9 +1,10 @@
 import * as dotenv from 'dotenv';
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { Logger } from './logger/logger.service';
+import { Logger } from './services/logger/logger.service';
+import { HttpExceptionFilter } from './services/http-exception.filter';
 
 dotenv.config();
 
@@ -14,6 +15,9 @@ async function bootstrap() {
   });
 
   app.useLogger(new Logger('App'));
+
+  const httpAdapter = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new HttpExceptionFilter(httpAdapter));
 
   app.useGlobalPipes(
     new ValidationPipe({

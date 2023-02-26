@@ -9,8 +9,8 @@ import { FavoritesModule } from './favorites/favorites.module';
 import { databaseConfig } from './db/db.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { LoggerMiddleware } from './logger/logger.middleware';
-import { Logger } from './logger/logger.service';
+import { LoggerMiddleware } from './services/logger/logger.middleware';
+import { Logger } from './services/logger/logger.service';
 
 @Module({
   imports: [
