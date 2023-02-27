@@ -11,7 +11,7 @@ const LOG_LEVEL_ERROR = 'ERROR';
 const LOG_LEVEL_WARN = 'WARN';
 
 const DEFAULT_LOG_FILE_MAX_SIZE = 5;
-const LOG_FILE_EXTENSION = '.log';
+const LOG_FILE_EXTENSION = 'log';
 
 const maxLogFileSize =
   parseInt(process.env.LOG_FILE_MAX_SIZE, 10) || DEFAULT_LOG_FILE_MAX_SIZE;
