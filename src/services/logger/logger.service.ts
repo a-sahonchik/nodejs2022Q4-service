@@ -1,4 +1,4 @@
-import { LoggerService } from '@nestjs/common';
+import { LoggerService, LogLevel } from '@nestjs/common';
 import * as process from 'process';
 import { dirname, join } from 'node:path';
 import { appendFileSync, mkdirSync, statSync, renameSync } from 'node:fs';
@@ -6,9 +6,14 @@ import { appendFileSync, mkdirSync, statSync, renameSync } from 'node:fs';
 const DEFAULT_CONTEXT = 'undefined';
 const SEPARATOR = '-';
 
-const LOG_LEVEL_LOG = 'LOG';
-const LOG_LEVEL_ERROR = 'ERROR';
-const LOG_LEVEL_WARN = 'WARN';
+const LOG_LEVEL = parseInt(process.env.LOG_LEVEL, 10);
+const logLevels: LogLevel[] = ['error', 'warn', 'log', 'verbose', 'debug'];
+
+const LOG_LEVEL_LOG = 'log';
+const LOG_LEVEL_ERROR = 'error';
+const LOG_LEVEL_WARN = 'warn';
+const LOG_LEVEL_DEBUG = 'debug';
+const LOG_LEVEL_VERBOSE = 'verbose';
 
 const DEFAULT_LOG_FILE_MAX_SIZE = 5;
 const LOG_FILE_EXTENSION = 'log';
@@ -35,7 +40,19 @@ export class Logger implements LoggerService {
     this.writeLog(LOG_LEVEL_WARN, message);
   }
 
-  private writeLog(logLevel: string, message: any): void {
+  debug(message: any): any {
+    this.writeLog(LOG_LEVEL_DEBUG, message);
+  }
+
+  verbose(message: any): any {
+    this.writeLog(LOG_LEVEL_VERBOSE, message);
+  }
+
+  private writeLog(logLevel: LogLevel, message: any): void {
+    if (logLevels.indexOf(logLevel) > LOG_LEVEL) {
+      return;
+    }
+
     const formattedMessage = this.getFormattedMessage(logLevel, message);
 
     process.stdout.write(formattedMessage);
