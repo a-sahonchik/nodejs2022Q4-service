@@ -27,7 +27,11 @@ export class AuthService {
   async login(loginUserDto: LoginUserDto) {
     const user = await this.validateUser(loginUserDto);
 
-    return this.getTokens(user.id, user.login);
+    const tokens = await this.getTokens(user.id, user.login);
+
+    await this.userRepository.updateRefreshToken(user.id, tokens.refreshToken)
+
+    return tokens;
   }
 
   private async validateUser(loginUserDto: LoginUserDto) {
@@ -65,7 +69,7 @@ export class AuthService {
     });
   }
 
-  async refreshTokens(updateTokenDTO: UpdateTokenDTO) {
+  async refreshTokens(payload: any, updateTokenDTO: UpdateTokenDTO) {
     try {
       const { userId, login } = await this.jwtService.verify(
         updateTokenDTO.refreshToken,
@@ -74,7 +78,11 @@ export class AuthService {
         },
       );
 
-      return this.getTokens(userId, login);
+      const tokens = await this.getTokens(userId, login);
+
+      await this.userRepository.updateRefreshToken(userId, tokens.refreshToken);
+
+      return tokens;
     } catch (err) {
       throw new ForbiddenException({ message: 'Invalid refresh token' });
     }

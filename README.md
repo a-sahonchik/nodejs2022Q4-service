@@ -40,8 +40,10 @@ All needed database migrations will be executed automatically.
 1. Run containers, go to Swagger UI - http://localhost:4000/docs/
 2. Send POST request to `/auth/signup` to create new user.
 3. Send POST request to `/auth/login` with login and password of created user. In response you'll receive `access` and `refresh` tokens.
-4. Copy `accessToken` from response, click `Authorize` button, insert access token (WITHOUT `Bearer ` perfix, cause it will be added automatically) and press `Authorize`. Now you are authorized and it's possible to send requests to all endpoints.
-5. If you want to refresh tokens, you should take `refreshToken` you received on login and send it in /auth/refresh request body. In response you'll get new pair of tokens.
+4. To pass access token to `Authorization` header you should copy `accessToken` from response, click `Authorize` button, insert access token (WITHOUT `Bearer ` perfix, cause it will be added automatically) and press `Authorize`. Now you are authorized and it's possible to send requests to all endpoints.
+5. If you want to refresh tokens, you should take `refreshToken` you received on login and send it in /auth/refresh request body. Also you need to path same refresh token in `Authorization` header, as described above. 
+
+    In response you'll get new pair of tokens.
 
 Or, if you want to use external apps like Postman, you should pass `Authorization` header in format `Authorization: Bearer <TOKEN>`
 

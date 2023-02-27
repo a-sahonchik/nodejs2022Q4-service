@@ -38,7 +38,7 @@ export class JwtAuthGuard implements CanActivate {
       const token = authHeader?.split(' ')[1];
 
       if (bearer !== 'Bearer' || !token) {
-        throw new UnauthorizedException({ message: 'Invalid auth token 1' });
+        throw new UnauthorizedException({ message: 'Invalid auth token' });
       }
 
       let user: unknown;
@@ -53,7 +53,7 @@ export class JwtAuthGuard implements CanActivate {
 
       req.user = user;
     } catch (error) {
-      throw new UnauthorizedException({ message: 'Invalid auth token 2' });
+      throw new UnauthorizedException({ message: 'Invalid auth token' });
     }
 
     return true;

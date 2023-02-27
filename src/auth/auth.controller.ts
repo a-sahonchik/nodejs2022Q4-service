@@ -3,6 +3,7 @@ import {
   ClassSerializerInterceptor,
   Controller,
   Post,
+  Request,
   SetMetadata,
   UseGuards,
   UseInterceptors,
@@ -48,7 +49,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Get new pair of access and refresh tokens' })
   @ApiOkResponse()
   @ApiBearerAuth('JWT')
-  async refreshTokens(@Body() updateTokenDTO: UpdateTokenDTO) {
-    return await this.authService.refreshTokens(updateTokenDTO);
+  async refreshTokens(@Request() req, @Body() updateTokenDTO: UpdateTokenDTO) {
+    return await this.authService.refreshTokens(req.user, updateTokenDTO);
   }
 }

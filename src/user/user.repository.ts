@@ -37,4 +37,11 @@ export class UserRepository {
   async updateRefreshToken(id: string, refreshToken: string): Promise<void> {
     await this.userRepository.update(id, { refreshToken });
   }
+
+  async findOneByIdAndRefreshToken(
+    id: string,
+    refreshToken: string,
+  ): Promise<User> {
+    return await this.userRepository.findOneByOrFail({ id, refreshToken });
+  }
 }
