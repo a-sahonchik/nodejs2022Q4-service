@@ -29,4 +29,12 @@ export class UserRepository {
 
     return this.findOne(id);
   }
+
+  public async findOneByLogin(login: string): Promise<User | null> {
+    return await this.userRepository.findOneBy({ login });
+  }
+
+  async updateRefreshToken(id: string, refreshToken: string): Promise<void> {
+    await this.userRepository.update(id, { refreshToken });
+  }
 }

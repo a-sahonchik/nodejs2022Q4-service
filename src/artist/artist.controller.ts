@@ -20,12 +20,14 @@ import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 
+@ApiBearerAuth('JWT')
 @UseInterceptors(ClassSerializerInterceptor)
 @ApiTags('Artist')
 @Controller('artist')

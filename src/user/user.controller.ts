@@ -20,6 +20,7 @@ import { UpdatePasswordDto } from './dto/update-password.dto';
 import { Response } from 'express';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiForbiddenResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
@@ -27,6 +28,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
+@ApiBearerAuth('JWT')
 @UseInterceptors(ClassSerializerInterceptor)
 @ApiTags('User')
 @Controller('user')

@@ -20,12 +20,14 @@ import { UpdateTrackDto } from './dto/update-track.dto';
 import { Track } from './track.entity';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 
+@ApiBearerAuth('JWT')
 @UseInterceptors(ClassSerializerInterceptor)
 @ApiTags('Track')
 @Controller('track')

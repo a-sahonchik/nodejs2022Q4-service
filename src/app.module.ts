@@ -11,6 +11,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { LoggerMiddleware } from './services/logger/logger.middleware';
 import { Logger } from './services/logger/logger.service';
+import { AuthModule } from './auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './auth/guard/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -21,9 +24,16 @@ import { Logger } from './services/logger/logger.service';
     FavoritesModule,
     TypeOrmModule.forRoot({ ...databaseConfig }),
     Logger,
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   constructor(private dataSource: DataSource) {}
