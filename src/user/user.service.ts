@@ -7,6 +7,9 @@ import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UserRepository } from './user.repository';
+import { compare, hash } from 'bcrypt';
+
+const CRYPT_SALT = parseInt(process.env.CRYPT_SALT, 10);
 
 @Injectable()
 export class UserService {
@@ -27,7 +30,9 @@ export class UserService {
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const user = new User(createUserDto.login, createUserDto.password);
+    const hashedPassword = await hash(createUserDto.password, CRYPT_SALT);
+
+    const user = new User(createUserDto.login, hashedPassword);
 
     await this.userRepository.create(user);
 
@@ -40,13 +45,18 @@ export class UserService {
   ): Promise<User> {
     const user = await this.findOne(id);
 
-    if (updatePasswordDto.oldPassword !== user.password) {
+    const passwordsMatch = await compare(
+      updatePasswordDto.oldPassword,
+      user.password,
+    );
+
+    if (!passwordsMatch) {
       throw new ForbiddenException(`Old password is incorrect`);
     }
 
     return this.userRepository.updatePassword(
       id,
-      updatePasswordDto.newPassword,
+      await hash(updatePasswordDto.newPassword, CRYPT_SALT),
     );
   }
 

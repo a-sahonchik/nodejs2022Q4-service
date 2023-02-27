@@ -10,6 +10,7 @@ import { CreateUserDto } from '../user/dto/create-user.dto';
 import { UserRepository } from '../user/user.repository';
 import { LoginUserDto } from '../user/dto/login-user.dto';
 import { UpdateTokenDTO } from './dto/update-token.dto';
+import { compare } from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -32,7 +33,9 @@ export class AuthService {
   private async validateUser(loginUserDto: LoginUserDto) {
     const user = await this.userRepository.findOneByLogin(loginUserDto.login);
 
-    if (user && user.password === loginUserDto.password) {
+    const passwordsMatch = await compare(loginUserDto.password, user.password);
+
+    if (user && passwordsMatch) {
       return user;
     }
 
