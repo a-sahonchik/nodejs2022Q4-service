@@ -11,6 +11,13 @@ services:
     environment:
       - PORT=${PORT}
       - DB_URL=${DB_URL}
+      - LOG_FILE_MAX_SIZE=${LOG_FILE_MAX_SIZE}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - TOKEN_EXPIRE_TIME=${TOKEN_EXPIRE_TIME}
+      - JWT_SECRET_REFRESH_KEY=${JWT_SECRET_REFRESH_KEY}
+      - TOKEN_REFRESH_EXPIRE_TIME=${TOKEN_REFRESH_EXPIRE_TIME}
+      - CRYPT_SALT=${CRYPT_SALT}
+      - LOG_LEVEL=${LOG_LEVEL}
     depends_on:
       - db
     restart: on-failure
@@ -36,7 +43,7 @@ services:
       - db
     volumes:
       - db-data:/var/lib/postgresql/data
-    command: ['postgres', '-c', 'logging_collector=on']
+#    command: ['postgres', '-c', 'logging_collector=on']
 
 volumes:
   db-data:

@@ -14,7 +14,7 @@ export class User {
   readonly id: string;
 
   @Column()
-  private login: string;
+  login: string;
 
   @VersionColumn()
   private version: number;
@@ -30,6 +30,10 @@ export class User {
   @Exclude()
   @Column()
   password: string;
+
+  @Exclude()
+  @Column({ nullable: true })
+  refreshToken: string | null;
 
   constructor(login: string, password: string) {
     this.login = login;

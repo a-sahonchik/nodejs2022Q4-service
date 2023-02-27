@@ -20,12 +20,14 @@ import { UpdateAlbumDto } from './dto/update-album.dto';
 import { Album } from './album.entity';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 
+@ApiBearerAuth('JWT')
 @UseInterceptors(ClassSerializerInterceptor)
 @ApiTags('Album')
 @Controller('album')
